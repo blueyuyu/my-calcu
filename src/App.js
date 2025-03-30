@@ -33,7 +33,6 @@ function reducer(state, { type, payload }) {
     case ACTIONS.ADD_DIGIT:
       // 操作过一次的情况
       if (state.isClear) {
-        console.log('第二次', 12);
         return {
           ...state,
           currentOperand: `${payload.digit}`,
@@ -45,9 +44,19 @@ function reducer(state, { type, payload }) {
         ...state,
         currentOperand: `${state.currentOperand || ""}${payload.digit}`,
       }
-      break;
 
     case ACTIONS.CHOOSE_OPERATION:
+      if (state.currentOperand === null || state.currentOperand === undefined) {
+        return state;
+      }
+      if (state.currentOperand === "") {
+        return {
+          ...state,
+          operation: payload.operator,
+          previousOperand: evaluate(state.previousOperand, state.currentOperand, state.operation),
+          currentOperand: "",
+        }
+      }
       return {
         ...state,
         operation: payload.operator,
